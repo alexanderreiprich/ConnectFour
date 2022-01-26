@@ -19,20 +19,20 @@ const UserDao_1 = require("./dao/UserDao");
 class User extends SuperUser_1.SuperUser {
     register(_username, _password) {
         return __awaiter(this, void 0, void 0, function* () {
-            let allUser = yield FileHandler_1.default.readJsonFile("./files/User.json");
+            let allUser = yield FileHandler_1.default.readJsonFile("./data/User.json");
             // Check if chosen username is already in use
             for (let i = 0; i < allUser.length; i++) {
                 if (allUser[i].username == _username)
                     return false;
             }
             // Add user to database of user
-            FileHandler_1.default.writeJsonFile("./files/User.json", new UserDao_1.UserDao(_username, _password));
+            FileHandler_1.default.writeJsonFile("./data/User.json", new UserDao_1.UserDao(_username, _password));
             return true;
         });
     }
     login(_username, _password) {
         return __awaiter(this, void 0, void 0, function* () {
-            let allUser = yield FileHandler_1.default.readJsonFile("./files/User.json");
+            let allUser = yield FileHandler_1.default.readJsonFile("./data/User.json");
             // Check if username and password are correct
             for (let i = 0; i < allUser.length; i++) {
                 if (allUser[i].username == _username && allUser[i].password == _password) {

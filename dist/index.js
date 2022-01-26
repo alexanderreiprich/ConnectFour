@@ -150,7 +150,6 @@ var ConnectFour;
                         break;
                     default:
                         Console_1.default.printLine("Option not available!");
-                        break;
                 }
             });
         }

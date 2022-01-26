@@ -24,7 +24,7 @@ namespace ConnectFour {
 
     public async showOptionsLogin(): Promise<void> {
       let answer: Answers<string> = await Console.showOptions(
-        ["Login", "Register", "Start Game as Guest"],
+        ["Login", "Register", "Start Game as Guest", "Quit Game"],
         "<------ Connect Four ------>"
       );
       this.handleAnswerLogin(answer.value);
@@ -40,6 +40,9 @@ namespace ConnectFour {
           break;
         case 3:
           this.handleUser("guest");
+          break;
+        case 4:
+          Console.closeConsole();
           break;
         default:
           Console.printLine("Option not available!")

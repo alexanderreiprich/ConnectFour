@@ -7,7 +7,7 @@ class Console {
     public consoleLine: readline.ReadLine = readline.createInterface({
         input: process.stdin,
         output: process.stdout
-    })
+    });
 
     constructor() {
         if (Console.instance)
@@ -15,39 +15,44 @@ class Console {
         Console.instance = this;
     }
 
-    public static getInstance() : Console {
+    public static getInstance(): Console {
         return Console.instance;
     }
 
-    public printLine(_line: string) : void {
+    public printLine(_line: string): void {
         this.consoleLine.write(_line);
         this.consoleLine.write("\n");
     }
 
     // Displaying choice options
-    public showOptions(_options: string[], _question: string) : Promise<Answers<string>> {
+    public showOptions(_options: string[], _question: string): Promise<Answers<string>> {
         let choices: any[] = [];
 
-        for(let i: number = 1; i <= _options.length; i++) {
-            choices.push( {title: _options[i-1], value: i } );
+        for (let i: number = 1; i <= _options.length; i++) {
+            choices.push({ title: _options[i - 1], value: i });
         }
         return prompts({
             type: 'select',
             name: 'value',
             message: _question,
             choices: choices,
-            initial: 1
+            initial: ""
         });
     }
 
     // Ask for text or number input
-    public askForAnswers(_question: string, _type: PromptType) : Promise<Answers<string>> {
+    public askForAnswers(_question: string, _type: PromptType): Promise<Answers<string>> {
         return prompts({
             type: _type,
             name: 'value',
             message: _question,
-            initial: 1
+            initial: ""
         });
+    }
+
+    public closeConsole(): void {
+        this.printLine("Thank you for playing!");
+        this.consoleLine.close();
     }
 
 }
