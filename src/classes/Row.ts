@@ -14,7 +14,7 @@ export class Row {
   private generateTiles(): Tile[] {
     let tileArray: Tile[] = [];
     for(let i = 0; i < this.length; i++) {
-      tileArray.push(new Tile([this.id, i], ""));
+      tileArray.push(new Tile([this.id, i], " "));
     }
     return tileArray;
   }

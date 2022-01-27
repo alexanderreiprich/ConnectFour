@@ -6,6 +6,11 @@ export class User extends SuperUser {
   public async register(_username: string,_password: string): Promise<Boolean> {
     let allUser: UserDao[] = await FileHandler.readJsonFile("./data/User.json");
 
+    // Check if chosen username is valid
+    let regexpUsername = new RegExp('^[a-zA-Z0-9]*$'); // Matches with input that only includes a-z/A-Z chars
+    if (!regexpUsername.test(_username))
+      return false;
+
     // Check if chosen username is already in use
     for (let i: number = 0; i < allUser.length; i++) {
       if ( allUser[i].username == _username)

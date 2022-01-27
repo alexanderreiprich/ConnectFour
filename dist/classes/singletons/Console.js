@@ -33,7 +33,7 @@ class Console {
             name: 'value',
             message: _question,
             choices: choices,
-            initial: 1
+            initial: ""
         });
     }
     // Ask for text or number input
@@ -42,8 +42,12 @@ class Console {
             type: _type,
             name: 'value',
             message: _question,
-            initial: 1
+            initial: ""
         });
+    }
+    closeConsole() {
+        this.printLine("Thank you for playing!");
+        this.consoleLine.close();
     }
 }
 Console.instance = new Console();

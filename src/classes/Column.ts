@@ -2,9 +2,9 @@ import { Tile } from "./Tile";
 
 export class Column {
 
-  private length: number;
-  private content: Tile[];
-  private id: number;
+  public length: number;
+  public content: Tile[];
+  public id: number;
   constructor(_length: number, _id: number) {
     this.length = _length;
     this.id = _id;

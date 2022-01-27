@@ -11,7 +11,7 @@ class Row {
     generateTiles() {
         let tileArray = [];
         for (let i = 0; i < this.length; i++) {
-            tileArray.push(new Tile_1.Tile([this.id, i], ""));
+            tileArray.push(new Tile_1.Tile([this.id, i], " "));
         }
         return tileArray;
     }

@@ -20,6 +20,10 @@ class User extends SuperUser_1.SuperUser {
     register(_username, _password) {
         return __awaiter(this, void 0, void 0, function* () {
             let allUser = yield FileHandler_1.default.readJsonFile("./data/User.json");
+            // Check if chosen username is valid
+            let regexpUsername = new RegExp('^[a-zA-Z0-9]*$'); // Matches with input that only includes a-z/A-Z chars
+            if (!regexpUsername.test(_username))
+                return false;
             // Check if chosen username is already in use
             for (let i = 0; i < allUser.length; i++) {
                 if (allUser[i].username == _username)
