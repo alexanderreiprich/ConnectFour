@@ -14,9 +14,21 @@ export class Column {
   private generateTiles(): Tile[] {
     let tileArray: Tile[] = [];
     for(let i = 0; i < this.length; i++) {
-      tileArray.push(new Tile([i, this.id], ""));
+      tileArray.push(new Tile([i, this.id], " "));
     }
     return tileArray;
+  }
+
+  public checkForWin(_winCon: number) : boolean {
+    let counter: number = 0;
+    for (let i = 0; i < this.content.length-1; i++) {
+      if (this.content[i] == this.content[i+1]) {
+        counter++;
+      }
+    }
+    if (counter == _winCon)
+      return true;
+    return false;
   }
 
 }

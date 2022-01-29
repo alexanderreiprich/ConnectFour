@@ -19,4 +19,16 @@ export class Row {
     return tileArray;
   }
 
+  public checkForWin(_winCon: number) : boolean {
+    let counter: number = 0;
+    for (let i = 0; i < this.content.length-1; i++) {
+      if (this.content[i] == this.content[i+1]) {
+        counter++;
+      }
+    }
+    if (counter == _winCon)
+      return true;
+    return false;
+  }
+
 }

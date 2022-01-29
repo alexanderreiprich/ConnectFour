@@ -1,15 +1,17 @@
 import * as readline from "readline";
 
 import Console from "./singletons/Console";
-import { Answers } from "prompts";
 
+import { Answers } from "prompts";
 import { User } from "./User";
 import { Game } from "./Game";
-import { getJSDocAugmentsTag } from "typescript";
+import { Statistic } from "./Statistic";
+import { StatisticDao } from "./dao/StatisticDao";
 
 export class Menu {
   public consoleLine: readline.ReadLine;
   private user: User;
+  private currentUser: string = "temp";
 
   constructor() {
     this.consoleLine = readline.createInterface({
@@ -69,38 +71,44 @@ export class Menu {
       }
     }
 
+    this.currentUser = username.value;
+
     let success: Boolean = false;
     switch (_task) {
       case "register":
         success = await this.user.register(username.value, password.value);
         if (success) {
-          Console.printLine("Registration complete! Please log in.");
-          this.handleUser("login");
+          Console.clearConsole();
+          Console.printLine("\nRegistration complete! Please log in.\n");
+          this.showOptionsLogin();
         }
         else {
+          Console.clearConsole();
           Console.printLine("\nUsername is already taken or it contains unsupported characters. Please try again.\n");
           Console.printLine("Keep in mind that only alphanumeric characters are allowed.\n");
-          this.handleUser("register")
+          this.showOptionsLogin();
         }
         break;
 
       case "login":
         success = await this.user.login(username.value, password.value);
         if (success) {
+          Console.clearConsole();
           Console.printLine("\nHello " + username.value + "!\n");
-          this.showMainMenu(true);
+          this.showMainMenu();
         }
         else {
+          Console.clearConsole();
           Console.printLine(
             "\nUsername or Password has been entered incorrectly. Please try again.\n"
           );
-          this.handleUser("login");
+          this.showOptionsLogin();
         }
         break;
 
       case "guest":
         Console.printLine("\nContinuing as guest user...\n");
-        this.showMainMenu(false);
+        this.showMainMenu();
         break;
 
       default:
@@ -108,9 +116,9 @@ export class Menu {
     }
   }
 
-  public async showMainMenu(registered: boolean): Promise<void> {
+  public async showMainMenu(): Promise<void> {
     let answer: Answers<string>;
-    if (registered) {
+    if (this.currentUser != "temp") {
       answer = await Console.showOptions(
         ["Play ConnectFour against a friend", "Play ConnectFour against the computer", "View your statistics", "Logout"],
         "Welcome! What do you want to do?"
@@ -122,7 +130,7 @@ export class Menu {
         "Welcome! What do you want to do?"
       );
     }
-    this.handleAnswerMainMenu(answer.value, registered);
+    this.handleAnswerMainMenu(answer.value, this.currentUser != "temp");
   }
 
   public async handleAnswerMainMenu(_answer: number, _registered: boolean): Promise<void> {
@@ -151,26 +159,36 @@ export class Menu {
     }
   }
 
-  public async handleMainMenu(_task: string) {
+  public async handleGameCreation(_task: string, _ai: boolean) : Promise<void> {
+    Console.clearConsole();
+    Console.printLine("\nPlease set up your playing field.");
+    Console.printLine("\nMake sure that the field is 3x3 tiles or bigger and that the win condition doesn't exceed the amount of tiles on one axis!\n");
+    let game : Game = new Game();
+    let yaxis : Answers<string> = await Console.askForAnswers("Tiles on the Y-Axis?", "number");
+    let xaxis : Answers<string> = await Console.askForAnswers("Tiles on the X-Axis?", "number");
+    let wincon : Answers<string> = await Console.askForAnswers("How many in a row to win?", "number");
+    game.startGame(yaxis.value, xaxis.value, wincon.value, _ai, this.currentUser, (_success: boolean) => {
+      if (_success)
+        this.showMainMenu();
+      else
+        this.handleMainMenu(_task); 
+    });
+      
+  }
+
+  public async handleMainMenu(_task: string): Promise<void> {
+    Console.clearConsole();
     switch (_task) {
       case "playFriend":
-        Console.printLine("\nPlease set up your playing field.");
-        Console.printLine("\nMake sure that the field is 3x3 tiles or bigger and that the win condition doesn't exceed the amount of tiles on one axis!\n");
-        let game : Game = new Game();
-        let yaxis : Answers<string> = await Console.askForAnswers("Tiles on the Y-Axis?", "number");
-        let xaxis : Answers<string> = await Console.askForAnswers("Tiles on the X-Axis?", "number");
-        let wincon : Answers<string> = await Console.askForAnswers("How many in a row to win?", "number");
-        if (game.startGame(yaxis.value, xaxis.value, wincon.value)) {
-          game.nextMove();
-        }
-        else
-          this.handleMainMenu("playFriend");
+        this.handleGameCreation(_task, false);
         break;
 
       case "playAI":
+        this.handleGameCreation(_task, true);
         break;
 
       case "statistics":
+        this.showStatistic(this.currentUser);
         break;
 
       case "logout":
@@ -182,5 +200,17 @@ export class Menu {
         Console.printLine("Task not available!");
         break;
     }
+  }
+
+  public async showStatistic(_user: string) : Promise<void> {
+    let statistic: Statistic = new Statistic(_user);
+    let curUserStatistic: StatisticDao = await statistic.returnStatistic(_user); 
+    Console.clearConsole();
+    Console.printLine("\nStatistics for " + _user + " :");
+    Console.printLine("Played Games: " + curUserStatistic.playedGames);
+    Console.printLine("Won Games: " + curUserStatistic.wonGames + " | " + (curUserStatistic.wonGames / curUserStatistic.playedGames) + "%");
+    Console.printLine("Lost Games: " + curUserStatistic.lostGames + " | " + (curUserStatistic.lostGames / curUserStatistic.playedGames) + "%\n");
+    
+    this.showMainMenu();
   }
 }

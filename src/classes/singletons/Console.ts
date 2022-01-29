@@ -3,6 +3,7 @@ import prompts, { Answers, PromptType } from 'prompts';
 
 class Console {
     private static instance: Console = new Console();
+    public lastInputLength: number = 0;
 
     public consoleLine: readline.ReadLine = readline.createInterface({
         input: process.stdin,
@@ -19,9 +20,24 @@ class Console {
         return Console.instance;
     }
 
-    public printLine(_line: string): void {
-        this.consoleLine.write(_line);
-        this.consoleLine.write("\n");
+    public printLine(_lines: string, _delete: boolean = false) {
+        this.printText([_lines], _delete);
+    }
+
+    public printText(_lines: string[], _delete: boolean = false) {
+        if (_delete) {
+            console.clear();
+        }
+        _lines.forEach(line => {
+            this.consoleLine.write(line);
+            this.consoleLine.write("\n");
+        });
+        if (_delete) {
+            this.lastInputLength = _lines.length;
+        }
+        else {
+            this.lastInputLength += _lines.length;
+        }
     }
 
     // Displaying choice options
@@ -48,6 +64,22 @@ class Console {
             message: _question,
             initial: ""
         });
+    }
+
+    // Ask for column in which to place the chip
+    public askForChipPlacement(_maxCols: number): Promise<Answers<string>> {
+        return prompts({
+            type: "number",
+            name: "value",
+            message: "Where do you want to place your chip?",
+            initial: 1,
+            min: 1,
+            max: _maxCols
+        })
+    }
+
+    public clearConsole(): void {
+        console.clear();
     }
 
     public closeConsole(): void {
