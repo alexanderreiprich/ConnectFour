@@ -1,6 +1,7 @@
 import * as readline from "readline";
 
 import Console from "./singletons/Console";
+import UserHandler from "./singletons/UserHandler";
 
 import { Answers } from "prompts";
 import { User } from "./User";
@@ -10,15 +11,11 @@ import { StatisticDao } from "./dao/StatisticDao";
 
 export class Menu {
   public consoleLine: readline.ReadLine;
-  private user: User;
-  private currentUser: string = "temp";
-
   constructor() {
     this.consoleLine = readline.createInterface({
       input: process.stdin,
       output: process.stdout
     });
-    this.user = new User();
   }
 
   public async showProgramStatus(): Promise<void> {
@@ -71,12 +68,10 @@ export class Menu {
       }
     }
 
-    this.currentUser = username.value;
-
     let success: Boolean = false;
     switch (_task) {
       case "register":
-        success = await this.user.register(username.value, password.value);
+        success = await UserHandler.register(username.value, password.value);
         if (success) {
           Console.clearConsole();
           Console.printLine("\nRegistration complete! Please log in.\n");
@@ -91,7 +86,7 @@ export class Menu {
         break;
 
       case "login":
-        success = await this.user.login(username.value, password.value);
+        success = await UserHandler.login(username.value, password.value)
         if (success) {
           Console.clearConsole();
           Console.printLine("\nHello " + username.value + "!\n");
@@ -118,7 +113,7 @@ export class Menu {
 
   public async showMainMenu(): Promise<void> {
     let answer: Answers<string>;
-    if (this.currentUser != "temp") {
+    if (UserHandler.getCurrentUser().username != "temp") {
       answer = await Console.showOptions(
         ["Play ConnectFour against a friend", "Play ConnectFour against the computer", "View your statistics", "Logout"],
         "Welcome! What do you want to do?"
@@ -130,7 +125,7 @@ export class Menu {
         "Welcome! What do you want to do?"
       );
     }
-    this.handleAnswerMainMenu(answer.value, this.currentUser != "temp");
+    this.handleAnswerMainMenu(answer.value, UserHandler.getCurrentUser().username != "temp");
   }
 
   public async handleAnswerMainMenu(_answer: number, _registered: boolean): Promise<void> {
@@ -167,7 +162,7 @@ export class Menu {
     let yaxis : Answers<string> = await Console.askForAnswers("Tiles on the Y-Axis?", "number");
     let xaxis : Answers<string> = await Console.askForAnswers("Tiles on the X-Axis?", "number");
     let wincon : Answers<string> = await Console.askForAnswers("How many in a row to win?", "number");
-    game.startGame(yaxis.value, xaxis.value, wincon.value, _ai, this.currentUser, (_success: boolean) => {
+    game.startGame(yaxis.value, xaxis.value, wincon.value, _ai, UserHandler.getCurrentUser(), (_success: boolean) => {
       if (_success)
         this.showMainMenu();
       else
@@ -188,7 +183,7 @@ export class Menu {
         break;
 
       case "statistics":
-        this.showStatistic(this.currentUser);
+        this.showStatistic(UserHandler.getCurrentUser());
         break;
 
       case "logout":
@@ -202,14 +197,13 @@ export class Menu {
     }
   }
 
-  public async showStatistic(_user: string) : Promise<void> {
-    let statistic: Statistic = new Statistic(_user);
-    let curUserStatistic: StatisticDao = await statistic.returnStatistic(_user); 
+  public async showStatistic(_user: User) : Promise<void> {
+    let curUserStatistic: StatisticDao = await _user.returnStatistic(); 
     Console.clearConsole();
-    Console.printLine("\nStatistics for " + _user + " :");
+    Console.printLine("\nStatistics for " + _user.username + " :");
     Console.printLine("Played Games: " + curUserStatistic.playedGames);
-    Console.printLine("Won Games: " + curUserStatistic.wonGames + " | " + (curUserStatistic.wonGames / curUserStatistic.playedGames) + "%");
-    Console.printLine("Lost Games: " + curUserStatistic.lostGames + " | " + (curUserStatistic.lostGames / curUserStatistic.playedGames) + "%\n");
+    Console.printLine("Won Games: " + curUserStatistic.wonGames + " | " + ((curUserStatistic.wonGames / curUserStatistic.playedGames)*100).toFixed(1) + "%");
+    Console.printLine("Lost Games: " + curUserStatistic.lostGames + " | " + ((curUserStatistic.lostGames / curUserStatistic.playedGames)*100).toFixed(1) + "%\n");
     
     this.showMainMenu();
   }

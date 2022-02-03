@@ -21,10 +21,16 @@ export class FileHandler {
     return json;
   }
 
-  public writeJsonFile(_pathToFile : string, _dataToFile: any) : void {
-    let file: any[] = this.readJsonFile(_pathToFile)
-    file.push(_dataToFile)
+  public writeJsonFile(_pathToFile: string, _dataToFile: any) : void {
+    let file: any[] = this.readJsonFile(_pathToFile);
+    file.push(_dataToFile);
     writeFileSync(resolve(this.rootDir + _pathToFile), JSON.stringify(file));
+  }
+
+  public deleteFromJsonFile(_pathToFile: string, _idOfItem: number) : void {
+    let json: any[] = this.readJsonFile(_pathToFile);
+    json.splice(_idOfItem, 1);
+    writeFileSync(resolve(this.rootDir + _pathToFile), JSON.stringify(json));
   }
 
 }

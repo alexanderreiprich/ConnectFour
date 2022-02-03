@@ -1,9 +1,8 @@
-import { Row } from "./Row";
-import { Column } from "./Column";
 import { Tile } from "./Tile";
 import Console from "./singletons/Console";
-import { Menu } from "./Menu";
 import { Line } from "./Line";
+import { Statistic } from "./Statistic";
+import { User } from "./User";
 
 export class Game {
 
@@ -15,11 +14,11 @@ export class Game {
   public field: Tile[][] = [];
   public currentPlayer: string = "X"
   public winCon: number = 0;
-  public user: string = "";
+  public user: User = new User("temp", "temp");
   private callback: Function = new Function();
   private ai: boolean = false;
 
-  public startGame(_rows: number, _cols: number, _winCon: number, _ai: boolean, _user: string, _callback: Function): void {
+  public startGame(_rows: number, _cols: number, _winCon: number, _ai: boolean, _user: User, _callback: Function): void {
     this.ai = _ai;
     this.winCon = _winCon;
     this.user = _user;
@@ -56,8 +55,6 @@ export class Game {
   public switchPlayer(): void {
     this.currentPlayer == "X" ? this.currentPlayer = "O": this.currentPlayer = "X";
   }
-
- 
 
   public async nextMove() : Promise<void> {
     this.displayField();
@@ -115,6 +112,8 @@ export class Game {
     return false;
   }
 
+  // TODO: check for game draw
+
   public aiMove() : void {
     this.displayField();
     let col: number = Math.floor(Math.random() * this.columns.length);
@@ -136,7 +135,10 @@ export class Game {
   }
 
   public endGame(_winner: string) : void {
+    let playerWon: boolean = _winner == "X" ? true : false; 
     Console.printLine("\n" + _winner + " won this game by getting " + this.winCon + " chips in a row! Congratulations!\n");
+    // TODO: Update Statistics
+    this.user.statistic.refreshStatistic(this.user, playerWon);
     this.callback(true);
   }
 }
