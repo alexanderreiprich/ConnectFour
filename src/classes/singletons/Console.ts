@@ -79,7 +79,7 @@ class Console {
     }
 
     public clearConsole(): void {
-        console.clear();
+        //console.clear();
     }
 
     public closeConsole(): void {

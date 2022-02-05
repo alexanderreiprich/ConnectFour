@@ -3,6 +3,7 @@ import Console from "./singletons/Console";
 import { Line } from "./Line";
 import { Statistic } from "./Statistic";
 import { User } from "./User";
+import { isMinusToken } from "typescript";
 
 export class Game {
 
@@ -10,7 +11,8 @@ export class Game {
 
   public rows: Line[] = [];
   public columns: Line[] = [];
-  public diagonals: Line[] = [];
+  public diagonalsTopToBottom: Line[] = [];
+  public diagonalsBottomToTop: Line[] = [];
   public field: Tile[][] = [];
   public currentPlayer: string = "X"
   public winCon: number = 0;
@@ -41,9 +43,47 @@ export class Game {
       this.rows.push(new Line(_cols, y, this.field[y]));
     }
 
+    //TODO: Math.min nutzen
+    function calcMin(x: number, y: number): number {
+      return (x < y) ? x : y;
+    }
+
+    function calcMin3(x: number, y: number, z: number) : number {
+      return calcMin(calcMin(x, y), z);
+    }
+
+    function calcMax(x: number, y: number): number {
+      return (x > y) ? x : y;
+    }
+
+    function fillDiagonals(): void {
+      for (let line = 0; line < (_rows+_cols-1); line++) {
+        let startCol = calcMax(0, line - _rows);
+        let count = calcMin3(line, (_cols - startCol), _rows);
+        this.diagonalsBottomToTop.push(new Line(count, line, []));
+        for (let j = 0; j < count; j++) {
+          this.diagonals[line].content.push(new Tile([(calcMin(_rows, line)) - j - 1, (startCol + j)], " "));
+        }
+        console.log(this.diagonals[line].content);
+      }
+  
+      // rows + cols - 2 = Gesamtzahl Diagonale pro Durchlauf
+      for (let line = 0; line < (_rows+_cols-1); line++) {
+        let startCol = calcMin(_cols-1, (_rows+_cols-2) - line);
+        let count = calcMin3(line+1, startCol+1, _rows);
+        this.diagonals.push(new Line(count, line, []));
+        for (let j = 0; j < count; j++) {
+          this.diagonals[line].content.push(new Tile([calcMin(line, _rows-1) - j, (startCol - j)], " "));
+        }
+        console.log(this.diagonals[line].content);
+      }
+    }
+    
+    
+    
     if (success) {
       Console.printLine("\nGame initialized!\n");
-      this.nextMove();
+      //this.nextMove();
     }
     else {
       Console.printLine("\nGame failed to initialize. Please make sure that the playing field meets the conditions and try again!\n");
