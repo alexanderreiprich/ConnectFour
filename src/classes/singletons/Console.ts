@@ -19,11 +19,14 @@ class Console {
     public static getInstance(): Console {
         return Console.instance;
     }
-
+    
+    // TODO: Check if printText and delete boolean are still required
+    // Prints single line of text into console
     public printLine(_lines: string, _delete: boolean = false) {
         this.printText([_lines], _delete);
     }
 
+    // Prints multiple lines of text into console
     public printText(_lines: string[], _delete: boolean = false) {
         if (_delete) {
             console.clear();
@@ -78,10 +81,12 @@ class Console {
         })
     }
 
+    // Clears console
     public clearConsole(): void {
-        //console.clear();
+        console.clear();
     }
 
+    // Closes console
     public closeConsole(): void {
         this.printLine("Thank you for playing!");
         this.consoleLine.close();

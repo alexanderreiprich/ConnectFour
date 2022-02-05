@@ -1,9 +1,7 @@
 import { Tile } from "./Tile";
 import Console from "./singletons/Console";
 import { Line } from "./Line";
-import { Statistic } from "./Statistic";
 import { User } from "./User";
-import { isMinusToken } from "typescript";
 
 export class Game {
 
@@ -20,17 +18,20 @@ export class Game {
   private callback: Function = new Function();
   private ai: boolean = false;
 
+  // Starts game with given parameters
   public startGame(_rows: number, _cols: number, _winCon: number, _ai: boolean, _user: User, _callback: Function): void {
     this.ai = _ai;
     this.winCon = _winCon;
     this.user = _user;
     this.callback = _callback;
     let success: boolean = true;
+    // Checks if parameters are valid
     if (_rows < 3 || _cols < 3)
       success = false;
     if (_rows < _winCon || _cols < _winCon)
       success = false;
 
+    // Fills Rows and Columns
     for (let y = 0; y < _rows; y++) {
       this.field[y] = [];
       for (let x = 0; x < _cols; x++) {
@@ -43,47 +44,36 @@ export class Game {
       this.rows.push(new Line(_cols, y, this.field[y]));
     }
 
-    //TODO: Math.min nutzen
-    function calcMin(x: number, y: number): number {
-      return (x < y) ? x : y;
-    }
-
-    function calcMin3(x: number, y: number, z: number) : number {
-      return calcMin(calcMin(x, y), z);
-    }
-
-    function calcMax(x: number, y: number): number {
-      return (x > y) ? x : y;
-    }
-
-    function fillDiagonals(): void {
+    // Fills Diagonals
+    const fillDiagonals = (): void => {
+      // Bottom to Top
       for (let line = 0; line < (_rows+_cols-1); line++) {
-        let startCol = calcMax(0, line - _rows);
-        let count = calcMin3(line, (_cols - startCol), _rows);
+        let startCol = Math.max(0, line - _rows);
+        let count = Math.min(line, (_cols - startCol), _rows);
         this.diagonalsBottomToTop.push(new Line(count, line, []));
         for (let j = 0; j < count; j++) {
-          this.diagonals[line].content.push(new Tile([(calcMin(_rows, line)) - j - 1, (startCol + j)], " "));
+          this.diagonalsBottomToTop[line].content.push(new Tile([(Math.min(_rows, line)) - j - 1, (startCol + j)], " "));
         }
-        console.log(this.diagonals[line].content);
+        console.log(this.diagonalsBottomToTop[line].content);
       }
   
-      // rows + cols - 2 = Gesamtzahl Diagonale pro Durchlauf
+      // Top to Bottom
       for (let line = 0; line < (_rows+_cols-1); line++) {
-        let startCol = calcMin(_cols-1, (_rows+_cols-2) - line);
-        let count = calcMin3(line+1, startCol+1, _rows);
-        this.diagonals.push(new Line(count, line, []));
+        let startCol = Math.min(_cols-1, (_rows+_cols-2) - line); // rows + cols - 2 = Gesamtzahl Diagonale pro Durchlauf
+        let count = Math.min(line+1, startCol+1, _rows);
+        this.diagonalsTopToBottom.push(new Line(count, line, []));
         for (let j = 0; j < count; j++) {
-          this.diagonals[line].content.push(new Tile([calcMin(line, _rows-1) - j, (startCol - j)], " "));
+          this.diagonalsTopToBottom[line].content.push(new Tile([Math.min(line, _rows-1) - j, (startCol - j)], " "));
         }
-        console.log(this.diagonals[line].content);
+        console.log(this.diagonalsTopToBottom[line].content);
       }
     }
     
-    
+    fillDiagonals();
     
     if (success) {
       Console.printLine("\nGame initialized!\n");
-      //this.nextMove();
+      this.nextMove();
     }
     else {
       Console.printLine("\nGame failed to initialize. Please make sure that the playing field meets the conditions and try again!\n");
@@ -92,6 +82,7 @@ export class Game {
     
   }
 
+  // Switches player
   public switchPlayer(): void {
     this.currentPlayer == "X" ? this.currentPlayer = "O": this.currentPlayer = "X";
   }
@@ -114,16 +105,22 @@ export class Game {
       this.nextMove();
       return;
     }
+    if (this.checkForGameDraw()) {
+      this.displayField();
+      this.endGame(this.currentPlayer, true);
+      return;
+    }
 
     if (this.checkForGameWon()) {
       this.displayField();
-      this.endGame(this.currentPlayer);
+      this.endGame(this.currentPlayer, false);
       return;
     }
     this.switchPlayer();
     this.ai ? this.aiMove() : this.nextMove()
   }
 
+  // Prints current state of playing field
   public displayField() : void {
     let header: string = "";
     for (let x = 1; x < this.columns.length + 1; x++) {
@@ -137,9 +134,10 @@ export class Game {
       }
       Console.printLine(singleRow);
     }
-    
   }
 
+  // TODO: Stopped working after implementing diagonals
+  // Calls checkForWin for every direction
   public checkForGameWon() : boolean {
     for (let i = 0; i < this.rows.length; i++) {
       if (this.rows[i].checkForWin(this.winCon))
@@ -149,11 +147,29 @@ export class Game {
       if (this.columns[k].checkForWin(this.winCon))
         return true
     }
+    for (let j = 0; j < this.diagonalsBottomToTop.length; j++) {
+      if (this.diagonalsBottomToTop[j].checkForWin(this.winCon))
+        return true
+    }
+    for (let j = 0; j < this.diagonalsTopToBottom.length; j++) {
+      if (this.diagonalsTopToBottom[j].checkForWin(this.winCon))
+        return true
+    }
     return false;
   }
 
-  // TODO: check for game draw
+  // Checks for draw
+  public checkForGameDraw(): boolean {
+    for (let i = 0; i < this.field.length; i++) {
+      for (let j = 0; j < this.field[i].length; j++) {
+        if (this.field[i][j].value == " ")
+          return false;
+      }
+    }
+    return true;
+  }
 
+  // Actions of the AI when playing against the computer
   public aiMove() : void {
     this.displayField();
     let col: number = Math.floor(Math.random() * this.columns.length);
@@ -162,7 +178,7 @@ export class Game {
       this.columns[col].placeChip(this.currentPlayer);
       if (this.checkForGameWon()) {
         this.displayField();
-        this.endGame(this.currentPlayer);
+        this.endGame(this.currentPlayer, false);
         return;
       }
       this.switchPlayer();
@@ -174,11 +190,17 @@ export class Game {
     }
   }
 
-  public endGame(_winner: string) : void {
+  // Ends the game
+  public endGame(_winner: string, _draw: boolean) : void {
     let playerWon: boolean = _winner == "X" ? true : false; 
-    Console.printLine("\n" + _winner + " won this game by getting " + this.winCon + " chips in a row! Congratulations!\n");
-    // TODO: Update Statistics
-    this.user.statistic.refreshStatistic(this.user, playerWon);
+    if (!_draw) {
+      Console.printLine("\n" + _winner + " won this game by getting " + this.winCon + " chips in a row! Congratulations!\n");
+      this.user.statistic.refreshStatistic(this.user, playerWon);
+    }
+    else {
+      Console.printLine("\nThe game ended in a draw! Nobody won.\n");
+      Console.printLine("\nThis game will not be represented in your statistics.\n")
+    }
     this.callback(true);
   }
 }

@@ -16,6 +16,7 @@ export class Statistic {
     this.user = _user;
   }
 
+  // Refreshes statistic depending on the outcome of the game
   public async refreshStatistic(_user: User, _won: boolean) {
     let statistic: StatisticDao = await _user.returnStatistic();
     statistic.playedGames++;

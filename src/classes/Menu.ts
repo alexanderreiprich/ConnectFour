@@ -6,7 +6,6 @@ import UserHandler from "./singletons/UserHandler";
 import { Answers } from "prompts";
 import { User } from "./User";
 import { Game } from "./Game";
-import { Statistic } from "./Statistic";
 import { StatisticDao } from "./dao/StatisticDao";
 
 export class Menu {
@@ -18,10 +17,12 @@ export class Menu {
     });
   }
 
-  public async showProgramStatus(): Promise<void> {
+  // Function that is called from the main.ts
+  public async runProgram(): Promise<void> {
     this.showOptionsLogin();
   }
 
+  // Shows Start Screen
   public async showOptionsLogin(): Promise<void> {
     let answer: Answers<string> = await Console.showOptions(
       ["Login", "Register", "Start Game as Guest", "Quit Game"],
@@ -30,6 +31,7 @@ export class Menu {
     this.handleAnswerLogin(answer.value);
   }
 
+  // Handler for input in start screen
   public async handleAnswerLogin(_answer: number): Promise<void> {
     switch (_answer) {
       case 1:
@@ -49,6 +51,7 @@ export class Menu {
     }
   }
 
+  // Handler for login and register
   public async handleUser(_task: string): Promise<void> {
     let username: Answers<string>;
     let password: Answers<string>;
@@ -111,6 +114,7 @@ export class Menu {
     }
   }
 
+  // Shows main menu
   public async showMainMenu(): Promise<void> {
     let answer: Answers<string>;
     if (UserHandler.getCurrentUser().username != "temp") {
@@ -128,6 +132,7 @@ export class Menu {
     this.handleAnswerMainMenu(answer.value, UserHandler.getCurrentUser().username != "temp");
   }
 
+  // Handler for main menu
   public async handleAnswerMainMenu(_answer: number, _registered: boolean): Promise<void> {
     switch (_answer) {
       case 1:
@@ -154,23 +159,24 @@ export class Menu {
     }
   }
 
+  // Handler for game creation
   public async handleGameCreation(_task: string, _ai: boolean) : Promise<void> {
     Console.clearConsole();
     Console.printLine("\nPlease set up your playing field.");
     Console.printLine("\nMake sure that the field is 3x3 tiles or bigger and that the win condition doesn't exceed the amount of tiles on one axis!\n");
-    let game : Game = new Game();
-    let yaxis : Answers<string> = await Console.askForAnswers("Tiles on the Y-Axis?", "number");
-    let xaxis : Answers<string> = await Console.askForAnswers("Tiles on the X-Axis?", "number");
-    let wincon : Answers<string> = await Console.askForAnswers("How many in a row to win?", "number");
+    let game: Game = new Game();
+    let yaxis: Answers<string> = await Console.askForAnswers("Tiles on the Y-Axis?", "number");
+    let xaxis: Answers<string> = await Console.askForAnswers("Tiles on the X-Axis?", "number");
+    let wincon: Answers<string> = await Console.askForAnswers("How many in a row to win?", "number");
     game.startGame(yaxis.value, xaxis.value, wincon.value, _ai, UserHandler.getCurrentUser(), (_success: boolean) => {
       if (_success)
         this.showMainMenu();
       else
         this.handleMainMenu(_task); 
-    });
-      
+    }); 
   }
 
+  // Handler for selected action in main menu
   public async handleMainMenu(_task: string): Promise<void> {
     Console.clearConsole();
     switch (_task) {
@@ -197,6 +203,7 @@ export class Menu {
     }
   }
 
+  // Displays statistic for current user
   public async showStatistic(_user: User) : Promise<void> {
     let curUserStatistic: StatisticDao = await _user.returnStatistic(); 
     Console.clearConsole();

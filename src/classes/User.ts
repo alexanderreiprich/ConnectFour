@@ -14,6 +14,7 @@ export class User {
     this.statistic = new Statistic(this);
   }
 
+  // Returns statistic of current user
   public async returnStatistic(): Promise<StatisticDao> {
     let allStats: StatisticDao[] = await FileHandler.readJsonFile("./data/Statistic.json");
     for (let i = 0; i < allStats.length; i++) {
