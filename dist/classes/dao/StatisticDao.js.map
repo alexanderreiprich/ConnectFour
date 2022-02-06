@@ -1,0 +1,1 @@
+{"version":3,"file":"StatisticDao.js","sourceRoot":"","sources":["../../../src/classes/dao/StatisticDao.ts"],"names":[],"mappings":";;;AAAA,MAAa,YAAY;IAOvB,YAAY,YAAoB,EAAE,SAAiB,EAAE,UAAkB,EAAE,OAAe;QACtF,IAAI,CAAC,WAAW,GAAG,YAAY,CAAC;QAChC,IAAI,CAAC,QAAQ,GAAG,SAAS,CAAC;QAC1B,IAAI,CAAC,SAAS,GAAG,UAAU,CAAC;QAC5B,IAAI,CAAC,MAAM,GAAG,OAAO,CAAC;IACxB,CAAC;CACF;AAbD,oCAaC"}

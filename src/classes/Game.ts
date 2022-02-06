@@ -54,7 +54,6 @@ export class Game {
         for (let j = 0; j < count; j++) {
           this.diagonalsBottomToTop[line].content.push(new Tile([(Math.min(_rows, line)) - j - 1, (startCol + j)], " "));
         }
-        console.log(this.diagonalsBottomToTop[line].content);
       }
   
       // Top to Bottom
@@ -65,11 +64,11 @@ export class Game {
         for (let j = 0; j < count; j++) {
           this.diagonalsTopToBottom[line].content.push(new Tile([Math.min(line, _rows-1) - j, (startCol - j)], " "));
         }
-        console.log(this.diagonalsTopToBottom[line].content);
       }
     }
     
     fillDiagonals();
+    //console.log(this.diagonalsBottomToTop[4].content);
     
     if (success) {
       Console.printLine("\nGame initialized!\n");
@@ -110,7 +109,7 @@ export class Game {
       this.endGame(this.currentPlayer, true);
       return;
     }
-
+    console.log(this.checkForGameWon());
     if (this.checkForGameWon()) {
       this.displayField();
       this.endGame(this.currentPlayer, false);
@@ -147,14 +146,14 @@ export class Game {
       if (this.columns[k].checkForWin(this.winCon))
         return true
     }
-    for (let j = 0; j < this.diagonalsBottomToTop.length; j++) {
+/*     for (let j = 0; j < this.diagonalsBottomToTop.length; j++) {
       if (this.diagonalsBottomToTop[j].checkForWin(this.winCon))
         return true
     }
-    for (let j = 0; j < this.diagonalsTopToBottom.length; j++) {
-      if (this.diagonalsTopToBottom[j].checkForWin(this.winCon))
+    for (let h = 0; h < this.diagonalsTopToBottom.length; h++) {
+      if (this.diagonalsTopToBottom[h].checkForWin(this.winCon))
         return true
-    }
+    } */
     return false;
   }
 
@@ -173,7 +172,6 @@ export class Game {
   public aiMove() : void {
     this.displayField();
     let col: number = Math.floor(Math.random() * this.columns.length);
-    console.log(col);
     if (this.columns[col].checkIfChipPlaceable()) {
       this.columns[col].placeChip(this.currentPlayer);
       if (this.checkForGameWon()) {
