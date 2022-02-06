@@ -26,3 +26,9 @@ export class User {
   }
   
 }
+
+export function isUsername(username: string): boolean {
+  if (username.length > 3)
+    return true
+  return false;
+}
