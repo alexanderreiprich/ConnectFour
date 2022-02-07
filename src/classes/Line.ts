@@ -35,21 +35,22 @@ export class Line {
   public checkForWin(_winCon: number) : boolean {
     let counter: number = 0;
     let currentPlayer: string = "";  
+
     for (let i = 0; i < this.content.length; i++) {
-      if (counter == _winCon)
-        return true;
       
-      else if (this.content[i].value == " ") { // Leeres Feld
+      if (this.content[i].value == " ") { // Unclaimed tile
         counter = 0;
         currentPlayer = "";
       }
-      else if (this.content[i].value == currentPlayer) { // Feld des Spielers
+      else if (this.content[i].value == currentPlayer) { // The player has claimed this tile
         counter++;
       }
-      else { // Feld des Gegners
+      else { // Opponent has claimed this tile
         counter = 1;
         currentPlayer = this.content[i].value;
       }
+      if (counter == _winCon)
+        return true;
     }
     return false;
   }
