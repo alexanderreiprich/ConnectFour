@@ -52,7 +52,7 @@ export class Game {
         let count = Math.min(line, (_cols - startCol), _rows);
         this.diagonalsBottomToTop.push(new Line(count, line, []));
         for (let j = 0; j < count; j++) {
-          this.diagonalsBottomToTop[line].content.push(new Tile([(Math.min(_rows, line)) - j - 1, (startCol + j)], " "));
+          this.diagonalsBottomToTop[line].content.push(this.field[(Math.min(_rows, line)) - j - 1][(startCol + j)]);
         }
       }
   
@@ -62,7 +62,7 @@ export class Game {
         let count = Math.min(line+1, startCol+1, _rows);
         this.diagonalsTopToBottom.push(new Line(count, line, []));
         for (let j = 0; j < count; j++) {
-          this.diagonalsTopToBottom[line].content.push(new Tile([Math.min(line, _rows-1) - j, (startCol - j)], " "));
+          this.diagonalsTopToBottom[line].content.push(this.field[(Math.min(line, _rows-1) - j)][(startCol - j)]);
         }
       }
     }
@@ -77,6 +77,7 @@ export class Game {
     else {
       Console.printLine("\nGame failed to initialize. Please make sure that the playing field meets the conditions and try again!\n");
       this.callback(false);
+      return;
     }
     
   }
@@ -109,7 +110,6 @@ export class Game {
       this.endGame(this.currentPlayer, true);
       return;
     }
-    console.log(this.checkForGameWon());
     if (this.checkForGameWon()) {
       this.displayField();
       this.endGame(this.currentPlayer, false);
@@ -146,14 +146,15 @@ export class Game {
       if (this.columns[k].checkForWin(this.winCon))
         return true
     }
-/*     for (let j = 0; j < this.diagonalsBottomToTop.length; j++) {
+     
+    for (let j = 0; j < this.diagonalsBottomToTop.length; j++) {
       if (this.diagonalsBottomToTop[j].checkForWin(this.winCon))
         return true
     }
     for (let h = 0; h < this.diagonalsTopToBottom.length; h++) {
       if (this.diagonalsTopToBottom[h].checkForWin(this.winCon))
         return true
-    } */
+    }
     return false;
   }
 
@@ -200,5 +201,6 @@ export class Game {
       Console.printLine("\nThis game will not be represented in your statistics.\n")
     }
     this.callback(true);
+    return;
   }
 }

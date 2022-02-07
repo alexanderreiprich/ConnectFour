@@ -106,6 +106,7 @@ export class Menu {
 
       case "guest":
         Console.printLine("\nContinuing as guest user...\n");
+        UserHandler.setCurrentUser(new User("temp", "temp"));
         this.showMainMenu();
         break;
 
@@ -194,6 +195,7 @@ export class Menu {
 
       case "logout":
         Console.printLine("\nYou have been logged out. See you next time!\n");
+
         this.showOptionsLogin();
         break;
 

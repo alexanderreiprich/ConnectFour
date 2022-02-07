@@ -21,7 +21,7 @@ export class UserHandler {
     let allUser: UserDao[] = await FileHandler.readJsonFile("./data/User.json");
 
     // Check if chosen username is valid
-    let regexpUsername = new RegExp('^[a-zA-Z0-9]*$'); // Matches with input that only includes a-z/A-Z chars
+    let regexpUsername = new RegExp('^[a-zA-Z0-9]*$'); // Matches with input that only includes a-z/A-Z/1-9 chars
     if (!regexpUsername.test(_username))
       return false;
 
@@ -55,6 +55,10 @@ export class UserHandler {
 
   public getCurrentUser(): User {
     return this.currentUser;
+  }
+
+  public setCurrentUser(newUser: User): void {
+    this.currentUser = newUser;
   }
 }
 

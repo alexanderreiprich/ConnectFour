@@ -29,7 +29,7 @@ class Console {
     // Prints multiple lines of text into console
     public printText(_lines: string[], _delete: boolean = false) {
         if (_delete) {
-            console.clear();
+            this.clearConsole();
         }
         _lines.forEach(line => {
             this.consoleLine.write(line);
@@ -83,7 +83,7 @@ class Console {
 
     // Clears console
     public clearConsole(): void {
-        console.clear;
+        console.clear();
     }
 
     // Closes console

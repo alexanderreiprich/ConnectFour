@@ -34,13 +34,23 @@ export class Line {
   // Checks line if win condition is fulfilled
   public checkForWin(_winCon: number) : boolean {
     let counter: number = 0;
-    for (let i = 0; i < this.content.length-1; i++) {
-      if (this.content[i] == this.content[i+1]) {
+    let currentPlayer: string = "";  
+    for (let i = 0; i < this.content.length; i++) {
+      if (counter == _winCon)
+        return true;
+      
+      else if (this.content[i].value == " ") { // Leeres Feld
+        counter = 0;
+        currentPlayer = "";
+      }
+      else if (this.content[i].value == currentPlayer) { // Feld des Spielers
         counter++;
       }
+      else { // Feld des Gegners
+        counter = 1;
+        currentPlayer = this.content[i].value;
+      }
     }
-    if (counter == _winCon)
-      return true;
     return false;
   }
 
