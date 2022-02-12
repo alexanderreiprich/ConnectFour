@@ -57,8 +57,8 @@ export class UserHandler {
     return this.currentUser;
   }
 
-  public setCurrentUser(newUser: User): void {
-    this.currentUser = newUser;
+  public setCurrentUser(_newUser: User): void {
+    this.currentUser = _newUser;
   }
 }
 

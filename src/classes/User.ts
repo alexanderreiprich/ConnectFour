@@ -24,11 +24,4 @@ export class User {
     }
     return new StatisticDao(0, 0, 0, this.username);
   }
-  
-}
-
-export function isUsername(username: string): boolean {
-  if (username.length >= 3)
-    return true
-  return false;
 }
