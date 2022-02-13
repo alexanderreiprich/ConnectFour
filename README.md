@@ -1,8 +1,10 @@
 ## ConnectFour
 
 Softwaredesign WiSe 2021/22
+
 Link to the repository: https://github.com/alexanderreiprich/ConnectFour
-Link to the diagrams: https://github.com/alexanderreiprich/ConnectFour/diagrams
+
+Link to the diagrams: https://github.com/alexanderreiprich/ConnectFour/tree/main/diagrams
 
 # Requirements
 - Node.js
