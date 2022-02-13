@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isUsername = exports.User = void 0;
+exports.User = void 0;
 const StatisticDao_1 = require("./dao/StatisticDao");
 const FileHandler_1 = __importDefault(require("./singletons/FileHandler"));
 const Statistic_1 = require("./Statistic");
@@ -36,10 +36,4 @@ class User {
     }
 }
 exports.User = User;
-function isUsername(username) {
-    if (username.length > 3)
-        return true;
-    return false;
-}
-exports.isUsername = isUsername;
 //# sourceMappingURL=User.js.map

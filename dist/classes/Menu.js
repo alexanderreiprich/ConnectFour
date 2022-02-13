@@ -35,6 +35,7 @@ exports.Menu = void 0;
 const readline = __importStar(require("readline"));
 const Console_1 = __importDefault(require("./singletons/Console"));
 const UserHandler_1 = __importDefault(require("./singletons/UserHandler"));
+const User_1 = require("./User");
 const Game_1 = require("./Game");
 class Menu {
     constructor() {
@@ -49,7 +50,7 @@ class Menu {
             this.showOptionsLogin();
         });
     }
-    // Shows Start Screen
+    // Shows start Screen
     showOptionsLogin() {
         return __awaiter(this, void 0, void 0, function* () {
             let answer = yield Console_1.default.showOptions(["Login", "Register", "Start Game as Guest", "Quit Game"], "<------ Connect Four ------>");
@@ -122,6 +123,7 @@ class Menu {
                     break;
                 case "guest":
                     Console_1.default.printLine("\nContinuing as guest user...\n");
+                    UserHandler_1.default.setCurrentUser(new User_1.User("temp", "temp"));
                     this.showMainMenu();
                     break;
                 default:

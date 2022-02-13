@@ -28,13 +28,22 @@ class Line {
     // Checks line if win condition is fulfilled
     checkForWin(_winCon) {
         let counter = 0;
-        for (let i = 0; i < this.content.length - 1; i++) {
-            if (this.content[i] == this.content[i + 1]) {
+        let currentPlayer = "";
+        for (let i = 0; i < this.content.length; i++) {
+            if (this.content[i].value == " ") { // Unclaimed tile
+                counter = 0;
+                currentPlayer = "";
+            }
+            else if (this.content[i].value == currentPlayer) { // The player has claimed this tile
                 counter++;
             }
+            else { // Opponent has claimed this tile
+                counter = 1;
+                currentPlayer = this.content[i].value;
+            }
+            if (counter == _winCon)
+                return true;
         }
-        if (counter == _winCon)
-            return true;
         return false;
     }
 }

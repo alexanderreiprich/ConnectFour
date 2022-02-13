@@ -31,7 +31,7 @@ class UserHandler {
         return __awaiter(this, void 0, void 0, function* () {
             let allUser = yield FileHandler_1.default.readJsonFile("./data/User.json");
             // Check if chosen username is valid
-            let regexpUsername = new RegExp('^[a-zA-Z0-9]*$'); // Matches with input that only includes a-z/A-Z chars
+            let regexpUsername = new RegExp('^[a-zA-Z0-9]*$'); // Matches with input that only includes a-z/A-Z/1-9 chars
             if (!regexpUsername.test(_username))
                 return false;
             // Check if chosen username is already in use
@@ -61,6 +61,9 @@ class UserHandler {
     }
     getCurrentUser() {
         return this.currentUser;
+    }
+    setCurrentUser(_newUser) {
+        this.currentUser = _newUser;
     }
 }
 exports.UserHandler = UserHandler;

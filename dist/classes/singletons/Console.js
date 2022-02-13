@@ -19,7 +19,6 @@ class Console {
     static getInstance() {
         return Console.instance;
     }
-    // TODO: Check if printText and delete boolean are still required
     // Prints single line of text into console
     printLine(_lines, _delete = false) {
         this.printText([_lines], _delete);
@@ -27,7 +26,7 @@ class Console {
     // Prints multiple lines of text into console
     printText(_lines, _delete = false) {
         if (_delete) {
-            console.clear();
+            this.clearConsole();
         }
         _lines.forEach(line => {
             this.consoleLine.write(line);
@@ -76,7 +75,7 @@ class Console {
     }
     // Clears console
     clearConsole() {
-        console.clear;
+        console.clear();
     }
     // Closes console
     closeConsole() {
