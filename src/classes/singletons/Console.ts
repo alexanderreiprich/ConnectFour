@@ -20,14 +20,13 @@ class Console {
         return Console.instance;
     }
     
-    // TODO: Check if printText and delete boolean are still required
     // Prints single line of text into console
-    public printLine(_lines: string, _delete: boolean = false) {
+    public printLine(_lines: string, _delete: boolean = false): void {
         this.printText([_lines], _delete);
     }
 
     // Prints multiple lines of text into console
-    public printText(_lines: string[], _delete: boolean = false) {
+    public printText(_lines: string[], _delete: boolean = false): void {
         if (_delete) {
             this.clearConsole();
         }

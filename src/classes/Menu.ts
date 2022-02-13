@@ -22,7 +22,7 @@ export class Menu {
     this.showOptionsLogin();
   }
 
-  // Shows Start Screen
+  // Shows start Screen
   public async showOptionsLogin(): Promise<void> {
     let answer: Answers<string> = await Console.showOptions(
       ["Login", "Register", "Start Game as Guest", "Quit Game"],
